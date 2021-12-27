@@ -19,7 +19,7 @@ require('dotenv').config();
 	// Go to Proto Slinger PDP
 	await page.goto(url, { waitUntil: 'networkidle2' });
 
-	console.log(`Looking at URL: ${url}`);
+	console.log(`LOOKING AT URL: ${url.toUpperCase()}`);
 
 	// Click body, fixes waited on selector not being found
 	await page.click('body');
@@ -27,7 +27,7 @@ require('dotenv').config();
 	// Wait for desired size option to be "attached"
 	await page.waitForSelector(`#pa_size option[value="${size}"].attached`);
 
-	console.log(`Size option ${size} found... Checking stock`);
+	console.log(`SIZE OPTION ${size.toUpperCase()} FOUND, CHECKING STOCK...`);
 
 	const inStock = await page.evaluate((size) => {
 		// Grab size option element
@@ -38,7 +38,7 @@ require('dotenv').config();
 			return option.classList.contains('out-of-stock') ? 'OUT OF STOCK :\'(' : 'IN STOCK!!!';
 		} else {
 			// Element not found...
-			return 'Attached size element not found...';
+			return 'SIZE NOT FOUND...';
 		}
 	}, size);
 
