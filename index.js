@@ -1,24 +1,38 @@
 const puppeteer = require('puppeteer');
+require('dotenv').config();
 
 (async () => {
 	const browser = await puppeteer.launch();
 	const page = await browser.newPage();
+	// URL of desired snowboard on neversummer.com
+	const url = process.env.URL;
 
-	console.log('WORKING...FINDING STOCK STATUS OF PROTO SLINGER 154X');
+	// Grab name of the board from URL for display
+	const board = url.split('2022')[1].split('-')[1].toUpperCase();
+
+	// Size of snowboard desired i.e. 154x - (Wide)
+	// Should be formatted as seen on website
+	const size = process.env.SIZE.replace(' ', '-').replace(/[()]/g, '').toLowerCase()
+
+	console.log('WORKING...');
 
 	// Go to Proto Slinger PDP
-	await page.goto('https://www.neversummer.com/shop/snowboards/mens-2022-protoslinger-snowboard/', { waitUntil: 'networkidle2' });
+	await page.goto(url, { waitUntil: 'networkidle2' });
+
+	console.log(`Looking at URL: ${url}`);
 
 	// Click body, fixes waited on selector not being found
 	await page.click('body');
 
 	// Wait for desired size option to be "attached"
-	await page.waitForSelector('#pa_size option[value="154x-wide"].attached');
+	await page.waitForSelector(`#pa_size option[value="${size}"].attached`);
 
-	let inStock = await page.evaluate(() => {
+	console.log(`Size option ${size} found... Checking stock`);
+
+	const inStock = await page.evaluate((size) => {
 		// Grab size option element
-		const option = document.querySelector('#pa_size option[value="154x-wide"]');
-		
+		const option = document.querySelector(`#pa_size option[value="${size}"]`);
+
 		if (option) {
 			// Return stock status
 			return option.classList.contains('out-of-stock') ? 'OUT OF STOCK :\'(' : 'IN STOCK!!!';
@@ -26,10 +40,10 @@ const puppeteer = require('puppeteer');
 			// Element not found...
 			return 'Attached size element not found...';
 		}
-	});
+	}, size);
 
 	// Log stock status
-	console.log('STATUS: ', inStock);
+	console.log('STATUS: ', board + ' ' + inStock);
 
 	// Close browser...DONE
 	await browser.close();
