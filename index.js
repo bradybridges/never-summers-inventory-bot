@@ -16,7 +16,7 @@ require('dotenv').config();
 
 	console.log('WORKING...');
 
-	// Go to Proto Slinger PDP
+	// Go to PDP
 	await page.goto(url, { waitUntil: 'networkidle2' });
 
 	console.log(`LOOKING AT URL: ${url.toUpperCase()}`);
