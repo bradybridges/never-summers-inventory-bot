@@ -1,0 +1,14 @@
+{
+  "name": "proto-checker",
+  "version": "1.0.0",
+  "description": "Checks if Never Summer's Proto Slinger is in stock.",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "author": "Brady Bridges",
+  "license": "ISC",
+  "dependencies": {
+    "puppeteer": "^13.0.1"
+  }
+}
