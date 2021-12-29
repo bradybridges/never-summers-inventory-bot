@@ -1,4 +1,5 @@
 const puppeteer = require('puppeteer');
+const nodemailer = require('nodemailer');
 require('dotenv').config();
 
 (async () => {
@@ -45,6 +46,61 @@ require('dotenv').config();
 	// Log stock status
 	console.log('STATUS: ', board + ' ' + inStock);
 
+	// Send email to user letting them know of the stock status
+	try {
+		const subject = `${board} IS ${inStock}`
+		const message = `${ inStock.includes('OUT OF STOCK') ? 'Bad news... the ' + board + ' IS ' + inStock : 'The ' + board + ' IS  ' + inStock }`
+		let html = false;
+
+		if (inStock.includes('OUT OF STOCK')) {
+			html = `<a href="${url}" target="_blank">${board}</a>`;
+		}
+
+		await sendMessage('bradyjbridges@gmail.com', subject, message, html, board, inStock, url);
+	} catch(e) {
+		console.log('Error sending email...');
+		console.log(e.message);
+	}
+
 	// Close browser...DONE
 	await browser.close();
 })();
+
+async function sendMessage (recipient, subject, text, html, board, inStock, url) {
+	const testAccount = await createTestSmtpAccount();
+	console.log('account: ', testAccount);
+
+	const transporter = nodemailer.createTransport(testAccount);
+
+	const emailResponse = await transporter.sendMail({
+		from: 'Never Summer Stock Checker',
+		to: recipient,
+		subject,
+		text,
+		html: `<h4>${text}</h4><a href="${url}" target="_blank">${board} page</a>`,
+	});
+
+	console.log(`Message sent to ${recipient}`);
+	console.log('Message details: ', emailResponse.messageId);
+	console.log('Preview URL: ', nodemailer.getTestMessageUrl(emailResponse));
+}
+
+const createTestSmtpAccount = () => {
+	return new Promise((resolve, reject) => {
+		nodemailer.createTestAccount((error, account) => {
+			if (error) {
+				return reject(`Failed to create a testing account. Details: ${error.message}`);
+			  }
+			return resolve({
+				host: account.smtp.host,
+				password: account.pass,
+				port: account.smtp.port,
+				secure: account.smtp.secure,
+				auth: {
+					user: account.user,
+					pass: account.pass,
+				}
+			});
+		});
+	});
+};
