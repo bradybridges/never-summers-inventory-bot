@@ -4,7 +4,9 @@ require('dotenv').config();
 
 (async () => {
 	// Initialize puppeteer
-	const browser = await puppeteer.launch();
+    const browser = await puppeteer.launch({
+        executablePath: '/usr/bin/chromium-browser'
+    });
 	const page = await browser.newPage();
 
 	// Grab needed env variables
