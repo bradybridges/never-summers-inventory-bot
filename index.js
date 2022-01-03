@@ -66,7 +66,7 @@ require('dotenv').config();
 		html += `<a href="${url}" target="_blank">LINK TO ${board}</a>`;
 
 		// Send email to client
-		await sendMessage(recipient, subject, message, html);
+		await sendMessage(process.env.RECEIVER, subject, message, html);
 	} catch(e) {
 		// Something went wrong, try to send message warning of bot failure
 		const subject = 'Never Summer Bot Failed :/';
@@ -74,7 +74,7 @@ require('dotenv').config();
 		let html = '<h1>Something went wrong with your never summer inventory checker bud...<h1></br>';
 		html += `Error: ${e.message}`;
 
-		await sendMessage(recipient, subject, message, html);
+		await sendMessage(process.env.RECEIVER, subject, message, html);
 
 		console.log(e.message);
 	}
