@@ -11,7 +11,7 @@ require('dotenv').config();
 	const url = process.env.URL; // URL of desired snowboard
 
 	// Grab name of the board from URL for display
-	const board = url.split('2022')[1].split('-')[1].toUpperCase();
+	const board = url.split('2022-')[1].replace('-snowboard/','').replaceAll('-', ' ').toUpperCase()
 
 	// Size of snowboard desired i.e. 154x - (Wide)
 	// Should be formatted as seen on website
